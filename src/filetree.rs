@@ -32,29 +32,29 @@ fn print_line<W: Write>(output: &mut W, lasts: &[bool], name: &OsStr) -> io::Res
             } else {
                 VERTICAL_CHAR
             };
-            try!(write!(output, "{}   ", c));
+            write!(output, "{}   ", c)?;
         }
         if *lasts.last().unwrap() {
-            try!(write!(output, "{} ", LAST_HORIZONTAL_STR));
+            write!(output, "{} ", LAST_HORIZONTAL_STR)?;
         } else {
-            try!(write!(output, "{} ", HORIZONTAL_STR,));
+            write!(output, "{} ", HORIZONTAL_STR,)?;
         }
     }
 
-    try!(writeln!(output, "{}", name));
+    writeln!(output, "{}", name)?;
 
     Ok(())
 }
 
 impl FileTree {
     pub fn print<W: Write>(&self, out: &mut W, lasts: &mut Vec<bool>) -> io::Result<()> {
-        try!(print_line(out, &lasts[..], &*self.name));
+        print_line(out, &lasts[..], &*self.name)?;
         lasts.push(false);
         for (i, child) in self.childs.iter().enumerate() {
             if i + 1 == self.childs.len() {
                 *lasts.last_mut().unwrap() = true;
             }
-            try!(child.print(out, lasts));
+            child.print(out, lasts)?;
         }
         lasts.pop();
         Ok(())
